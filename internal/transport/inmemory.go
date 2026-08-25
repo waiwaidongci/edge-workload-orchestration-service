@@ -23,9 +23,13 @@ func (d *InMemoryDispatcher) Dispatch(ctx context.Context, item *executiondomain
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	d.messages = append(d.messages, Message{ExecutionID: item.ID, NodeID: item.NodeID, Attempt: item.Attempt, SentAt: item.UpdatedAt.UnixMilli()})
 	return nil
 }
 func (d *InMemoryDispatcher) Messages() []Message {
-	return d.messages
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return append([]Message(nil), d.messages...)
 }

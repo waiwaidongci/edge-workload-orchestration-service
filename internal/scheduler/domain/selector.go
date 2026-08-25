@@ -12,11 +12,8 @@ type Candidate struct {
 	Evaluation policydomain.Evaluation `json:"evaluation"`
 }
 
-var sharedCandidates []Candidate
-
 func Select(nodes []*nodedomain.Node, policy *policydomain.Policy, resources nodedomain.Resources, labels map[string]string) []Candidate {
-	result := sharedCandidates[:0]
-	defer func() { sharedCandidates = result }()
+	result := make([]Candidate, 0, len(nodes))
 	for _, node := range nodes {
 		evaluation := policydomain.Evaluate(policy, node, resources, labels)
 		if evaluation.Eligible {

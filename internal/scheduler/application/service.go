@@ -172,11 +172,7 @@ func (s *Service) recoverExpired(ctx context.Context, now time.Time) error {
 	return nil
 }
 
-var sharedSimulation []Candidate
-
 func (s *Service) Simulate(ctx context.Context, command SimulateCommand) ([]Candidate, error) {
-	result := sharedSimulation[:0]
-	defer func() { sharedSimulation = result }()
 	policy, err := s.policies.Get(ctx, command.PolicyID)
 	if err != nil {
 		return nil, err
@@ -186,9 +182,9 @@ func (s *Service) Simulate(ctx context.Context, command SimulateCommand) ([]Cand
 		return nil, err
 	}
 	candidates := schedulerdomain.Select(nodes, policy, command.Resources, command.Labels)
-	result = result[:len(candidates)]
-	for i, candidate := range candidates {
-		result[i] = Candidate{NodeID: candidate.Node.ID, Region: candidate.Node.Region, Score: candidate.Evaluation.Score, Reasons: candidate.Evaluation.Reasons}
+	result := make([]Candidate, 0, len(candidates))
+	for _, candidate := range candidates {
+		result = append(result, Candidate{NodeID: candidate.Node.ID, Region: candidate.Node.Region, Score: candidate.Evaluation.Score, Reasons: candidate.Evaluation.Reasons})
 	}
 	return result, nil
 }
