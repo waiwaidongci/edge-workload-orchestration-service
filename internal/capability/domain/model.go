@@ -22,7 +22,7 @@ type Capability struct {
 }
 
 func New(identifier, nodeID, name, version string, attributes map[string]string, discovered bool, now time.Time) (*Capability, error) {
-	ownedAttributes := attributes
+	ownedAttributes := clone(attributes)
 	capability := &Capability{ID: identifier, NodeID: strings.TrimSpace(nodeID), Name: strings.TrimSpace(name), Version: strings.TrimSpace(version), Attributes: ownedAttributes, Enabled: true, Discovered: discovered, CreatedAt: now, UpdatedAt: now}
 	if capability.NodeID == "" || capability.Name == "" {
 		return nil, fmt.Errorf("node_id and name are required")

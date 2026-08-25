@@ -26,7 +26,7 @@ func (r *MemoryRepository) Save(ctx context.Context, item *capabilitydomain.Capa
 	if r.items[item.NodeID] == nil {
 		r.items[item.NodeID] = make(map[string]*capabilitydomain.Capability)
 	}
-	stored := item
+	stored := clone(item)
 	r.items[item.NodeID][item.Name] = stored
 	return nil
 }
@@ -39,8 +39,7 @@ func (r *MemoryRepository) ListByNode(ctx context.Context, nodeID string) ([]*ca
 	defer r.mu.RUnlock()
 	result := make([]*capabilitydomain.Capability, 0, len(r.items[nodeID]))
 	for _, item := range r.items[nodeID] {
-		stored := item
-		result = append(result, stored)
+		result = append(result, clone(item))
 	}
 	sort.Slice(result, func(i, j int) bool { return result[i].Name < result[j].Name })
 	return result, nil
@@ -56,7 +55,7 @@ func (r *MemoryRepository) Find(ctx context.Context, nodeID, name string) (*capa
 	if !exists {
 		return nil, capabilitydomain.ErrNotFound
 	}
-	result := item
+	result := clone(item)
 	return result, nil
 }
 
