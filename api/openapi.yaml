@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: Edge Task Orchestrator API
+  version: 1.0.0
+  description: Node registry, task scheduling, execution receipts and dead-letter operations.
+servers:
+  - url: http://localhost:8090
+paths:
+  /healthz:
+    get: { responses: { '200': { description: healthy } } }
+  /readyz:
+    get: { responses: { '200': { description: ready } } }
+  /metrics:
+    get: { responses: { '200': { description: Prometheus metrics } } }
+  /api/v1/nodes:
+    post: { summary: Register an edge node, responses: { '201': { description: created } } }
+    get: { summary: List nodes, responses: { '200': { description: list } } }
+  /api/v1/nodes/{nodeID}/heartbeat:
+    post: { summary: Record node heartbeat, responses: { '202': { description: accepted } } }
+  /api/v1/nodes/{nodeID}/capabilities:
+    get: { summary: List node capabilities, responses: { '200': { description: list } } }
+  /api/v1/templates:
+    post: { summary: Create task template, responses: { '201': { description: created } } }
+    get: { summary: List task templates, responses: { '200': { description: list } } }
+  /api/v1/templates/{templateID}/versions:
+    post: { summary: Add task template version, responses: { '201': { description: created } } }
+  /api/v1/policies:
+    post: { summary: Create scheduling policy, responses: { '201': { description: created } } }
+    get: { summary: List scheduling policies, responses: { '200': { description: list } } }
+  /api/v1/tasks:
+    post: { summary: Submit a task, responses: { '202': { description: queued } } }
+    get: { summary: List executions, responses: { '200': { description: list } } }
+  /api/v1/tasks/{executionID}/cancel:
+    post: { summary: Request cancellation, responses: { '202': { description: accepted } } }
+  /api/v1/tasks/{executionID}/nodes/{nodeID}/receipt:
+    post: { summary: Accept node execution receipt, responses: { '200': { description: updated } } }
+  /api/v1/scheduler/simulate:
+    post: { summary: Simulate candidate selection, responses: { '200': { description: candidates } } }
+  /api/v1/dead-letters:
+    get: { summary: List dead letters, responses: { '200': { description: list } } }
+
