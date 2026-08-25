@@ -50,8 +50,8 @@ func copyConstraints(source Constraints) Constraints {
 	target.RequiredLabels = copyMap(source.RequiredLabels)
 	target.AffinityLabels = copyMap(source.AffinityLabels)
 	target.AntiAffinityLabels = copyMap(source.AntiAffinityLabels)
-	target.PreferredRegions = source.PreferredRegions
-	target.RequiredRegions = source.RequiredRegions
+	target.PreferredRegions = copySlice(source.PreferredRegions)
+	target.RequiredRegions = copySlice(source.RequiredRegions)
 	return target
 }
 func copyMap(source map[string]string) map[string]string {
@@ -59,5 +59,10 @@ func copyMap(source map[string]string) map[string]string {
 	for k, v := range source {
 		target[k] = v
 	}
+	return target
+}
+func copySlice(source []string) []string {
+	target := make([]string, len(source))
+	copy(target, source)
 	return target
 }

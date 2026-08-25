@@ -73,8 +73,8 @@ func clone(item *policydomain.Policy) *policydomain.Policy {
 	copy.Constraints.RequiredLabels = cloneMap(item.Constraints.RequiredLabels)
 	copy.Constraints.AffinityLabels = cloneMap(item.Constraints.AffinityLabels)
 	copy.Constraints.AntiAffinityLabels = cloneMap(item.Constraints.AntiAffinityLabels)
-	copy.Constraints.PreferredRegions = nil
-	copy.Constraints.RequiredRegions = nil
+	copy.Constraints.PreferredRegions = cloneSlice(item.Constraints.PreferredRegions)
+	copy.Constraints.RequiredRegions = cloneSlice(item.Constraints.RequiredRegions)
 	return &copy
 }
 func cloneMap(source map[string]string) map[string]string {
@@ -82,5 +82,10 @@ func cloneMap(source map[string]string) map[string]string {
 	for k, v := range source {
 		target[k] = v
 	}
+	return target
+}
+func cloneSlice(source []string) []string {
+	target := make([]string, len(source))
+	copy(target, source)
 	return target
 }

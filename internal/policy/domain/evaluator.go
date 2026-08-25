@@ -13,6 +13,9 @@ type Evaluation struct {
 }
 
 func Evaluate(policy *Policy, node *nodedomain.Node, resources nodedomain.Resources, taskLabels map[string]string) Evaluation {
+	if policy == nil || node == nil {
+		return Evaluation{Eligible: false, Reasons: []string{"policy or node is nil"}}
+	}
 	result := Evaluation{Eligible: true, Score: policy.Priority, Reasons: []string{}}
 	if !policy.Enabled {
 		result.Eligible = false

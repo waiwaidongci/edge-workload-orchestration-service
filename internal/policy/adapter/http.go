@@ -37,7 +37,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	item, err := h.service.Get(r.Context(), r.PathValue("policyID"))
 	if errors.Is(err, policydomain.ErrNotFound) {
-		httpapi.WriteError(w, 500, "policy_not_found", err)
+		httpapi.WriteError(w, 404, "policy_not_found", err)
 		return
 	}
 	if err != nil {
