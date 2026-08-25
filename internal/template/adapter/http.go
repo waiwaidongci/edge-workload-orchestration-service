@@ -1,7 +1,6 @@
 package adapter
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -20,7 +19,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		httpapi.WriteError(w, 400, "invalid_request", err)
 		return
 	}
-	item, err := h.service.Create(context.Background(), command)
+	item, err := h.service.Create(r.Context(), command)
 	if err != nil {
 		httpapi.WriteError(w, 422, "template_invalid", err)
 		return
@@ -33,7 +32,7 @@ func (h *Handler) AddVersion(w http.ResponseWriter, r *http.Request) {
 		httpapi.WriteError(w, 400, "invalid_request", err)
 		return
 	}
-	item, err := h.service.AddVersion(context.Background(), r.PathValue("templateID"), version)
+	item, err := h.service.AddVersion(r.Context(), r.PathValue("templateID"), version)
 	if errors.Is(err, templatedomain.ErrNotFound) {
 		httpapi.WriteError(w, 404, "template_not_found", err)
 		return
@@ -45,7 +44,7 @@ func (h *Handler) AddVersion(w http.ResponseWriter, r *http.Request) {
 	httpapi.WriteJSON(w, 201, item)
 }
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	items, err := h.service.List(context.Background())
+	items, err := h.service.List(r.Context())
 	if err != nil {
 		httpapi.WriteError(w, 500, "template_list_failed", err)
 		return
@@ -53,7 +52,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	httpapi.WriteJSON(w, 200, map[string]any{"items": items, "count": len(items)})
 }
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	item, err := h.service.Get(context.Background(), r.PathValue("templateID"))
+	item, err := h.service.Get(r.Context(), r.PathValue("templateID"))
 	if errors.Is(err, templatedomain.ErrNotFound) {
 		httpapi.WriteError(w, 404, "template_not_found", err)
 		return

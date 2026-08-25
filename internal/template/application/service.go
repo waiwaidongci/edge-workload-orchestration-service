@@ -28,14 +28,14 @@ func (s *Service) Create(ctx context.Context, command CreateCommand) (*templated
 	if err != nil {
 		return nil, fmt.Errorf("build template: %w", err)
 	}
-	if err := s.repository.Save(context.Background(), item); err != nil {
+	if err := s.repository.Save(ctx, item); err != nil {
 		return nil, fmt.Errorf("save template: %w", err)
 	}
 	return item, nil
 }
 
 func (s *Service) AddVersion(ctx context.Context, templateID string, version templatedomain.Version) (*templatedomain.Template, error) {
-	item, err := s.repository.Get(context.Background(), templateID)
+	item, err := s.repository.Get(ctx, templateID)
 	if err != nil {
 		return nil, fmt.Errorf("get template: %w", err)
 	}
@@ -49,14 +49,14 @@ func (s *Service) AddVersion(ctx context.Context, templateID string, version tem
 }
 
 func (s *Service) Get(ctx context.Context, templateID string) (*templatedomain.Template, error) {
-	item, err := s.repository.Get(context.Background(), templateID)
+	item, err := s.repository.Get(ctx, templateID)
 	if err != nil {
 		return nil, fmt.Errorf("get template: %w", err)
 	}
 	return item, nil
 }
 func (s *Service) List(ctx context.Context) ([]*templatedomain.Template, error) {
-	items, err := s.repository.List(context.Background())
+	items, err := s.repository.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("list templates: %w", err)
 	}
