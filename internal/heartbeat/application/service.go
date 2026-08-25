@@ -43,9 +43,9 @@ func (s *Service) Beat(ctx context.Context, nodeID string, command BeatCommand) 
 	if err := s.repository.Append(ctx, record); err != nil {
 		return heartbeatdomain.Record{}, fmt.Errorf("store heartbeat: %w", err)
 	}
-	go func() {
-		_ = s.presence.Touch(ctx, nodeID, s.timeout)
-	}()
+	if err := s.presence.Touch(ctx, nodeID, s.timeout); err != nil {
+		return heartbeatdomain.Record{}, fmt.Errorf("touch presence: %w", err)
+	}
 	if previous == nodedomain.StatusOffline {
 		_ = s.repository.AppendStatusChange(ctx, heartbeatdomain.StatusChange{NodeID: nodeID, From: string(previous), To: string(node.Status), Reason: "heartbeat restored", At: now})
 	}
@@ -68,10 +68,12 @@ func (s *Service) Sweep(ctx context.Context) (int, error) {
 		if err := s.nodes.Update(ctx, node); err != nil {
 			return changed, fmt.Errorf("mark node offline: %w", err)
 		}
-		go func() {
-			_ = s.presence.Remove(ctx, node.ID)
-		}()
-		_ = s.repository.AppendStatusChange(ctx, heartbeatdomain.StatusChange{NodeID: node.ID, From: string(previous), To: string(node.Status), Reason: "heartbeat timeout", At: now})
+		if err := s.presence.Remove(ctx, node.ID); err != nil {
+			return changed, fmt.Errorf("remove presence for node %s: %w", node.ID, err)
+		}
+		if err := s.repository.AppendStatusChange(ctx, heartbeatdomain.StatusChange{NodeID: node.ID, From: string(previous), To: string(node.Status), Reason: "heartbeat timeout", At: now}); err != nil {
+			return changed, fmt.Errorf("store status change: %w", err)
+		}
 		changed++
 	}
 	return changed, nil

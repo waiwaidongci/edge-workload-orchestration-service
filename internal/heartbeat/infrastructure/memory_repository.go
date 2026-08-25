@@ -98,6 +98,8 @@ func (p *MemoryPresence) Touch(ctx context.Context, nodeID string, ttl time.Dura
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	p.expires[nodeID] = p.now().Add(ttl)
 	return nil
 }
@@ -105,6 +107,8 @@ func (p *MemoryPresence) Online(ctx context.Context, nodeID string) (bool, error
 	if err := ctx.Err(); err != nil {
 		return false, err
 	}
+	p.mu.RLock()
+	defer p.mu.RUnlock()
 	expires, ok := p.expires[nodeID]
 	return ok && p.now().Before(expires), nil
 }
@@ -112,6 +116,8 @@ func (p *MemoryPresence) Remove(ctx context.Context, nodeID string) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	delete(p.expires, nodeID)
 	return nil
 }
