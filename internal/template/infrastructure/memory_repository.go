@@ -73,6 +73,9 @@ func (r *MemoryRepository) Update(ctx context.Context, item *templatedomain.Temp
 
 func clone(item *templatedomain.Template) *templatedomain.Template {
 	copy := *item
-	copy.Versions = item.Versions
+	copy.Versions = make([]templatedomain.Version, len(item.Versions))
+	for i := range item.Versions {
+		copy.Versions[i] = templatedomain.CopyVersion(item.Versions[i])
+	}
 	return &copy
 }

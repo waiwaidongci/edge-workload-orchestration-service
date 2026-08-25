@@ -67,6 +67,7 @@ func (t *Template) AddVersion(version Version, now time.Time) (Version, error) {
 	version.Number = t.LatestVersion + 1
 	version.CreatedAt = now
 	version.RequiredCapabilities = unique(version.RequiredCapabilities)
+	version = copyVersion(version)
 	t.Versions = append(t.Versions, version)
 	t.LatestVersion = version.Number
 	t.UpdatedAt = now
@@ -101,16 +102,25 @@ func unique(values []string) []string {
 	sort.Strings(result)
 	return result
 }
-func cloneMap(source map[string]string) map[string]string {
-	result := make(map[string]string, len(source))
-	for k, v := range source {
-		result[k] = v
-	}
-	return result
-}
 func copyVersion(source Version) Version {
-	source.Command = source.Command
-	source.RequiredCapabilities = source.RequiredCapabilities
-	source.Environment = source.Environment
-	return source
+	out := source
+	if source.Command != nil {
+		out.Command = append([]string(nil), source.Command...)
+	}
+	if source.RequiredCapabilities != nil {
+		out.RequiredCapabilities = append([]string(nil), source.RequiredCapabilities...)
+	}
+	if source.Environment != nil {
+		out.Environment = make(map[string]string, len(source.Environment))
+		for k, v := range source.Environment {
+			out.Environment[k] = v
+		}
+	}
+	return out
 }
+
+// CopyVersion returns a deep copy of v, detaching all slice and map fields
+// from any aliasing the caller may hold. It is the package's public deep-copy
+// primitive for the Version type, used by callers that need ownership of the
+// copied data (e.g. the infrastructure layer when cloning a Template).
+func CopyVersion(v Version) Version { return copyVersion(v) }
