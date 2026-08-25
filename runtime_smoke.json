@@ -1,0 +1,12 @@
+{
+  "project_intro": "基于 Go 实现的边缘工作负载编排 Web 项目，一款后端服务，完成边缘节点调度、任务执行跟踪与失败恢复。",
+  "mode": "service",
+  "start": "go run ./cmd/edge-task-orchestrator",
+  "workdir": ".",
+  "env": {
+    "EDGE_HTTP_ADDRESS": "127.0.0.1:18091"
+  },
+  "ready_url": "http://127.0.0.1:18091/healthz",
+  "ready_status": [200],
+  "startup_timeout": 20
+}

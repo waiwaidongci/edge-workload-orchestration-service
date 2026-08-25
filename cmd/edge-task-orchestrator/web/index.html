@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge Operations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">EO</span>
+      <div>
+        <strong>Edge Operations</strong>
+        <span>Workload orchestration</span>
+      </div>
+    </div>
+    <div class="toolbar">
+      <label class="auto-refresh"><input id="autoRefresh" type="checkbox" checked> Auto refresh</label>
+      <button id="refreshButton" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="status-strip" aria-label="Service status">
+      <div><span class="status-dot" id="healthDot"></span><small>API</small><strong id="healthValue">Checking</strong></div>
+      <div><small>Nodes</small><strong id="nodeCount">0</strong></div>
+      <div><small>Tasks</small><strong id="taskCount">0</strong></div>
+      <div><small>Active policies</small><strong id="policyCount">0</strong></div>
+      <div><small>Open dead letters</small><strong id="deadLetterCount">0</strong></div>
+      <p id="lastUpdated">Waiting for first refresh</p>
+    </section>
+
+    <section class="workspace">
+      <nav class="tabs" aria-label="Operations views">
+        <button class="tab active" data-view="nodes" type="button">Nodes</button>
+        <button class="tab" data-view="tasks" type="button">Tasks</button>
+        <button class="tab" data-view="policies" type="button">Policies</button>
+        <button class="tab" data-view="failures" type="button">Failures</button>
+      </nav>
+      <div class="table-tools">
+        <label for="filterInput">Filter</label>
+        <input id="filterInput" type="search" placeholder="Search current view">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden>No records in this view.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
