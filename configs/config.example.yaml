@@ -1,0 +1,17 @@
+http:
+  address: ":8090"
+  read_timeout: 5s
+  write_timeout: 10s
+  shutdown_timeout: 10s
+  max_body_bytes: 1048576
+  rate_per_second: 100
+scheduler:
+  interval: 250ms
+  lease_duration: 30s
+  heartbeat_timeout: 45s
+  max_attempts: 4
+  base_backoff: 1s
+storage:
+  postgres_dsn: "postgres://edge:edge@localhost:5432/edge?sslmode=disable"
+  redis_addr: "localhost:6379"
+
